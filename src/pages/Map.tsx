@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Circle, Polyline } from 'react-leaflet';
-import { Layers, ShieldCheck, MapPin, AlertTriangle, Building2, PhoneCall, Filter } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet';
+import { Layers, MapPin } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
-// Leaflet icon fix
 let DefaultIcon = L.icon({
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
@@ -14,14 +14,14 @@ let DefaultIcon = L.icon({
 L.Marker.prototype.options.icon = DefaultIcon;
 
 export default function MapView() {
-  const center: [number, number] = [28.6692, 77.4538]; // Ghaziabad coordinates
+  const navigate = useNavigate();
+  const center: [number, number] = [28.6692, 77.4538];
 
   const [layers, setLayers] = useState({
     floodArea: true,
     shelters: true,
     hospitals: true,
     rescueTeams: true,
-    blockedRoads: true,
   });
 
   const toggleLayer = (key: keyof typeof layers) => {
@@ -52,7 +52,7 @@ export default function MapView() {
 
       {/* Map Container Wrapper */}
       <div className="flex-1 relative rounded-2xl overflow-hidden border border-slate-800 shadow-2xl bg-slate-950">
-        {/* Floating Info Overlay Card (Matching Reference Screen) */}
+        {/* Floating Info Overlay Card */}
         <div className="absolute top-4 left-4 z-[400] bg-slate-900/90 backdrop-blur-md border border-slate-700/80 p-4 rounded-2xl shadow-2xl max-w-xs space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="font-extrabold text-sm text-white">Ghaziabad</h3>
@@ -71,9 +71,16 @@ export default function MapView() {
               <div className="text-sm font-extrabold text-emerald-400">1.8 km</div>
             </div>
           </div>
+
+          <button
+            onClick={() => navigate('/evacuation')}
+            className="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl transition-colors shadow-md"
+          >
+            Get Evacuation Route
+          </button>
         </div>
 
-        {/* Floating Map Layers Control (Matching Reference Screen) */}
+        {/* Floating Map Layers Control */}
         <div className="absolute top-4 right-4 z-[400] bg-slate-900/90 backdrop-blur-md border border-slate-700/80 p-4 rounded-2xl shadow-2xl w-60 space-y-3">
           <h3 className="font-bold text-xs text-white flex items-center gap-2 pb-2 border-b border-slate-800">
             <Layers className="w-4 h-4 text-blue-400" />
@@ -171,6 +178,12 @@ export default function MapView() {
                 <div className="font-bold text-emerald-700">Community Relief Shelter #1</div>
                 <div className="text-xs text-slate-600">Capacity: 2,430 / 3,200 (Occupancy 76%)</div>
                 <div className="text-xs text-blue-600 font-bold mt-1">Available Beds: 770</div>
+                <button
+                  onClick={() => navigate('/evacuation')}
+                  className="mt-2 text-xs font-bold bg-blue-600 text-white px-3 py-1 rounded-lg w-full"
+                >
+                  Navigate Here
+                </button>
               </Popup>
             </Marker>
           )}
@@ -182,6 +195,23 @@ export default function MapView() {
                 <div className="font-bold text-blue-700">City Emergency Hospital</div>
                 <div className="text-xs text-slate-600">Available Beds: 482 | ICU Beds: 38</div>
                 <div className="text-xs text-emerald-600 font-bold mt-1">Emergency Trauma Unit Open</div>
+                <button
+                  onClick={() => navigate('/resources')}
+                  className="mt-2 text-xs font-bold bg-slate-800 text-white px-3 py-1 rounded-lg w-full"
+                >
+                  View Bed Stats
+                </button>
+              </Popup>
+            </Marker>
+          )}
+
+          {/* Rescue Team Marker */}
+          {layers.rescueTeams && (
+            <Marker position={[28.6710, 77.4500]}>
+              <Popup>
+                <div className="font-bold text-amber-700">Rescue Team Delta</div>
+                <div className="text-xs text-slate-600">Status: Active Search & Rescue</div>
+                <div className="text-xs text-slate-800 font-bold mt-1">Personnel: 14</div>
               </Popup>
             </Marker>
           )}

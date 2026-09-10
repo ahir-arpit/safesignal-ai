@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrainCircuit, AlertTriangle, ShieldAlert, ArrowRight, Sparkles } from 'lucide-react';
+import { BrainCircuit, Sparkles, CheckCircle2 } from 'lucide-react';
 
 interface PriorityItem {
   id: string;
@@ -8,16 +8,27 @@ interface PriorityItem {
   level: 'Critical' | 'High' | 'Medium' | 'Low';
   priorityScore: number;
   status: string;
+  dispatched?: boolean;
 }
 
 export default function AIPriority() {
   const [incidents, setIncidents] = useState<PriorityItem[]>([
-    { id: '1', location: 'Village A (River Bank)', peopleCount: 150, level: 'Critical', priorityScore: 94, status: 'Unassigned' },
-    { id: '2', location: 'Area B (Residential Sector 4)', peopleCount: 42, level: 'High', priorityScore: 81, status: 'In Dispatch' },
-    { id: '3', location: 'Area C (Commercial Belt)', peopleCount: 15, level: 'Medium', priorityScore: 62, status: 'Team En Route' },
-    { id: '4', location: 'Area D (Suburbs North)', peopleCount: 5, level: 'Medium', priorityScore: 48, status: 'Assessed' },
-    { id: '5', location: 'Area E (Highway Outskirts)', peopleCount: 2, level: 'Low', priorityScore: 32, status: 'Assessed' },
+    { id: '1', location: 'Village A (River Bank)', peopleCount: 150, level: 'Critical', priorityScore: 94, status: 'Unassigned', dispatched: false },
+    { id: '2', location: 'Area B (Residential Sector 4)', peopleCount: 42, level: 'High', priorityScore: 81, status: 'In Dispatch', dispatched: false },
+    { id: '3', location: 'Area C (Commercial Belt)', peopleCount: 15, level: 'Medium', priorityScore: 62, status: 'Team En Route', dispatched: true },
+    { id: '4', location: 'Area D (Suburbs North)', peopleCount: 5, level: 'Medium', priorityScore: 48, status: 'Assessed', dispatched: false },
+    { id: '5', location: 'Area E (Highway Outskirts)', peopleCount: 2, level: 'Low', priorityScore: 32, status: 'Assessed', dispatched: false },
   ]);
+
+  const handleDispatch = (id: string) => {
+    setIncidents(prev =>
+      prev.map(item =>
+        item.id === id
+          ? { ...item, status: 'Rescue Dispatched!', dispatched: true }
+          : item
+      )
+    );
+  };
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
@@ -37,7 +48,7 @@ export default function AIPriority() {
             <Sparkles className="w-4 h-4 text-indigo-400 animate-pulse" />
             <span>Gemini 2.5 AI Real-Time Priority Scoring Engine</span>
           </div>
-          <span className="text-[10px] text-slate-400">Auto-Refreshed: 30s ago</span>
+          <span className="text-[10px] text-slate-400">Auto-Refreshed: Just now</span>
         </div>
 
         <div className="divide-y divide-slate-800/80">
@@ -64,7 +75,7 @@ export default function AIPriority() {
                     </span>
                   </div>
                   <div className="text-xs text-slate-400 mt-0.5">
-                    {item.peopleCount} people trapped • Status: <span className="text-slate-200">{item.status}</span>
+                    {item.peopleCount} people trapped • Status: <span className={item.dispatched ? "text-emerald-400 font-bold" : "text-slate-200"}>{item.status}</span>
                   </div>
                 </div>
               </div>
@@ -79,12 +90,27 @@ export default function AIPriority() {
                   ></div>
                 </div>
 
-                <button className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-                  item.level === 'Critical'
-                    ? 'bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-600/30'
-                    : 'bg-slate-800 hover:bg-slate-700 text-slate-200'
-                }`}>
-                  {item.level === 'Critical' ? 'Rescue Now' : 'Assign Team'}
+                <button
+                  onClick={() => handleDispatch(item.id)}
+                  disabled={item.dispatched}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                    item.dispatched
+                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 cursor-default'
+                      : item.level === 'Critical'
+                      ? 'bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-600/30'
+                      : 'bg-blue-600 hover:bg-blue-500 text-white'
+                  }`}
+                >
+                  {item.dispatched ? (
+                    <>
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>Dispatched</span>
+                    </>
+                  ) : item.level === 'Critical' ? (
+                    'Rescue Now'
+                  ) : (
+                    'Assign Team'
+                  )}
                 </button>
               </div>
             </div>
