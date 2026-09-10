@@ -1,115 +1,154 @@
-import { useTranslation } from 'react-i18next';
-import { AlertTriangle, MapPin, ThermometerSun, Wind, Waves } from 'lucide-react';
-import { cn } from '../lib/utils';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AlertTriangle, MapPin, Waves, ThermometerSun, Wind, ArrowRight, Shield, Bell, CheckCircle2 } from 'lucide-react';
+
+interface AlertItem {
+  id: string;
+  title: string;
+  level: string;
+  color: string;
+  location: string;
+  impact: string;
+  action: string;
+  time: string;
+  affectedCount?: number;
+}
 
 export default function Alerts() {
-  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<'active' | 'history'>('active');
+  const [alerts, setAlerts] = useState<AlertItem[]>([]);
 
-  const alerts = [
-    {
-      id: 1,
-      type: 'Flood',
-      title: 'CRITICAL FLOOD WARNING',
-      level: 'CRITICAL',
-      color: 'red',
-      icon: Waves,
-      location: 'River District',
-      impact: 'Severe flooding possible.',
-      action: 'Move to higher ground immediately.',
-      time: '10 minutes ago'
-    },
-    {
-      id: 2,
-      type: 'Heat',
-      title: 'EXTREME HEAT WARNING',
-      level: 'HIGH',
-      color: 'orange',
-      icon: ThermometerSun,
-      location: 'City Center',
-      impact: 'Temperatures exceeding 42°C.',
-      action: 'Stay indoors, hydrate properly.',
-      time: '1 hour ago'
-    },
-    {
-      id: 3,
-      type: 'Storm',
-      title: 'SEVERE WEATHER ALERT',
-      level: 'MODERATE',
-      color: 'yellow',
-      icon: Wind,
-      location: 'Northern Suburbs',
-      impact: 'High winds and heavy rain expected.',
-      action: 'Secure loose objects outdoors.',
-      time: '3 hours ago'
-    }
-  ];
+  useEffect(() => {
+    fetch('/api/alerts')
+      .then(res => res.json())
+      .then(data => {
+        if (data.alerts) setAlerts(data.alerts);
+      })
+      .catch(() => {});
+  }, []);
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
-      <h1 className="text-3xl font-bold text-slate-800 mb-8">{t('Active Alerts')}</h1>
+    <div className="space-y-6 max-w-5xl mx-auto">
+      {/* Page Title Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-2xl font-black text-white tracking-tight flex items-center gap-2">
+            <Bell className="w-6 h-6 text-red-500" />
+            Alerts & Notifications
+          </h1>
+          <p className="text-xs text-slate-400 mt-1">
+            Stay informed about the latest disaster alerts and advisories.
+          </p>
+        </div>
 
-      <div className="space-y-6">
-        {alerts.map(alert => (
-          <div key={alert.id} className={cn(
-            "bg-white rounded-2xl shadow-sm border overflow-hidden",
-            alert.color === 'red' ? 'border-red-200' :
-            alert.color === 'orange' ? 'border-orange-200' : 'border-yellow-200'
-          )}>
-            <div className={cn(
-              "px-6 py-4 flex items-center gap-3 border-b",
-              alert.color === 'red' ? 'bg-red-50 border-red-100' :
-              alert.color === 'orange' ? 'bg-orange-50 border-orange-100' : 'bg-yellow-50 border-yellow-100'
-            )}>
-              <alert.icon className={cn(
-                "w-6 h-6",
-                alert.color === 'red' ? 'text-red-600' :
-                alert.color === 'orange' ? 'text-orange-600' : 'text-yellow-600'
-              )} />
-              <h2 className={cn(
-                "text-lg font-bold",
-                alert.color === 'red' ? 'text-red-800' :
-                alert.color === 'orange' ? 'text-orange-800' : 'text-yellow-800'
-              )}>{alert.title}</h2>
-            </div>
-            
-            <div className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div>
-                  <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Location</h4>
-                  <p className="font-medium text-slate-800 flex items-center gap-1"><MapPin className="w-4 h-4"/> {alert.location}</p>
-                </div>
-                <div>
-                  <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Risk Level</h4>
-                  <span className={cn(
-                    "text-sm font-bold px-2 py-1 rounded-md inline-block mt-1",
-                    alert.color === 'red' ? 'bg-red-100 text-red-700' :
-                    alert.color === 'orange' ? 'bg-orange-100 text-orange-700' : 'bg-yellow-100 text-yellow-700'
-                  )}>{alert.level}</span>
-                </div>
-              </div>
-              
-              <div className="space-y-4 mb-6">
-                <div>
-                  <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Expected Impact</h4>
-                  <p className="text-slate-700">{alert.impact}</p>
-                </div>
-                <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                  <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Recommended Action</h4>
-                  <p className="font-semibold text-slate-800">{alert.action}</p>
-                </div>
-              </div>
+        {/* Tab Switcher */}
+        <div className="flex bg-slate-900 border border-slate-800 p-1 rounded-xl">
+          <button
+            onClick={() => setActiveTab('active')}
+            className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+              activeTab === 'active'
+                ? 'bg-blue-600 text-white shadow-md'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            Active Alerts ({alerts.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('history')}
+            className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+              activeTab === 'history'
+                ? 'bg-blue-600 text-white shadow-md'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            Alert History
+          </button>
+        </div>
+      </div>
 
-              <div className="flex flex-col sm:flex-row gap-3">
-                <button className="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl transition-colors">
-                  {t('View Live Risk Map')}
-                </button>
-                <button className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold rounded-xl transition-colors">
-                  Safety Instructions
-                </button>
+      {/* Alerts List matching reference design */}
+      <div className="space-y-4">
+        {activeTab === 'active' ? (
+          alerts.map((alert) => (
+            <div
+              key={alert.id}
+              className={`rounded-2xl p-6 border transition-all ${
+                alert.level === 'CRITICAL'
+                  ? 'bg-red-950/20 border-red-500/40 shadow-lg shadow-red-950/30'
+                  : alert.level === 'HIGH'
+                  ? 'bg-amber-950/20 border-amber-500/40'
+                  : 'bg-slate-900/60 border-slate-800'
+              }`}
+            >
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="flex items-start gap-4">
+                  <div
+                    className={`p-3 rounded-xl shrink-0 ${
+                      alert.level === 'CRITICAL'
+                        ? 'bg-red-500/20 text-red-400 border border-red-500/30'
+                        : alert.level === 'HIGH'
+                        ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                        : 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+                    }`}
+                  >
+                    <AlertTriangle className="w-6 h-6" />
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h2 className="text-lg font-black text-white tracking-wide">{alert.title}</h2>
+                      <span
+                        className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${
+                          alert.level === 'CRITICAL'
+                            ? 'bg-red-500 text-white'
+                            : alert.level === 'HIGH'
+                            ? 'bg-amber-500 text-slate-950'
+                            : 'bg-blue-500 text-white'
+                        }`}
+                      >
+                        {alert.level}
+                      </span>
+                    </div>
+
+                    <p className="text-xs text-slate-300">{alert.impact}</p>
+
+                    <div className="flex items-center gap-4 text-[11px] text-slate-400 pt-1">
+                      <span className="flex items-center gap-1">
+                        <MapPin className="w-3.5 h-3.5 text-slate-500" />
+                        {alert.location}
+                      </span>
+                      <span>•</span>
+                      <span>Issued: {alert.time}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Action Buttons matching reference design */}
+                <div className="flex flex-row md:flex-col gap-2 shrink-0">
+                  <button
+                    onClick={() => navigate('/evacuation')}
+                    className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-md shadow-blue-600/20"
+                  >
+                    <span>View Safe Route</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+
+                  <button
+                    onClick={() => navigate('/map')}
+                    className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-bold transition-all text-center"
+                  >
+                    Find Shelter
+                  </button>
+                </div>
               </div>
             </div>
+          ))
+        ) : (
+          <div className="text-center py-12 bg-slate-900/40 border border-slate-800 rounded-2xl text-slate-400 text-sm">
+            No archived alert history available for this session.
           </div>
-        ))}
+        )}
       </div>
     </div>
   );
