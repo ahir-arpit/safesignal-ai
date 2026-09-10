@@ -10,7 +10,7 @@ interface Message {
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'model', content: "Hello! I am RakshakNet AI (SafeSignal Assistant). How can I assist you with emergency response or disaster guidelines?" }
+    { role: 'model', content: "Hello! I am SafeSignal AI Assistant. How can I assist you with emergency response or disaster guidelines?" }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);

@@ -78,7 +78,7 @@ async function startServer() {
         model: "gemini-2.5-flash",
         contents: history,
         config: {
-          systemInstruction: "You are SafeSignal AI (RakshakNet), an advanced disaster early warning and emergency response assistant. Keep responses concise, clear, action-oriented, and formatted in short bullet points. Always add standard emergency disclaimers.",
+          systemInstruction: "You are SafeSignal AI, an advanced disaster early warning and emergency response assistant. Keep responses concise, clear, action-oriented, and formatted in short bullet points. Always add standard emergency disclaimers.",
         },
       });
 

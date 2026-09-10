@@ -44,7 +44,7 @@ export default function Sidebar() {
           </div>
           <div>
             <h1 className="font-extrabold text-lg text-white tracking-wide leading-tight">
-              Rakshak<span className="text-blue-400">Net</span>
+              Safe<span className="text-blue-400">Signal</span>
             </h1>
             <p className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider">
               Predict • Prepare • Respond
@@ -97,7 +97,7 @@ export default function Sidebar() {
               <User className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-xs font-bold text-slate-200 leading-tight">Pallavi Gupta</div>
+              <div className="text-xs font-bold text-slate-200 leading-tight">User</div>
               <div className="text-[10px] text-blue-400 font-medium">{role}</div>
             </div>
           </div>
