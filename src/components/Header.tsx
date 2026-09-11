@@ -31,6 +31,12 @@ export default function Header() {
 
       {/* Right Controls & Widgets */}
       <div className="flex items-center gap-4">
+        {/* Public & Govt Use Portal Badge */}
+        <div className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-300 text-xs font-semibold">
+          <Building2 className="w-3.5 h-3.5 text-amber-400" />
+          <span>Public & Govt Dual Portal</span>
+        </div>
+
         {/* System Status Pill */}
         <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
           <ShieldCheck className="w-3.5 h-3.5" />
