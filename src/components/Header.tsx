@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, CloudSun, Bell, ShieldCheck, AlertCircle } from 'lucide-react';
+import { Search, CloudSun, Bell, ShieldCheck, AlertCircle, Building2 } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { useNavigate } from 'react-router-dom';
 
